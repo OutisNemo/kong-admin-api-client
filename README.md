@@ -1,8 +1,8 @@
 
 # Kong Admin Api Client
-This is a .NET client to interact with the Kong Admin API.
+This is a .NET Core client to interact with the Kong Admin API. This code has been tested and used in production.
 
-Kong 1.0.x had a nice documentation but no client was available for it. We processed the documentation and created a [swagger.yaml](docs/swagger.yaml) file from the most important endpoints, then we generated a client with [Autorest](https://github.com/Azure/autorest). We added a couple of extensions to the generated classes so with this library it is easy to operate Kong.
+Kong 1.0.x had a nice documentation but no up to date dotnet client was available for it. We processed the documentation and created a [swagger.yaml](docs/swagger.yaml) file from the most important endpoints, then we generated a client with [Autorest](https://github.com/Azure/autorest). We added a couple of extensions to the generated classes so with this library it is easy to operate Kong.
 
 ## API documentation
 Though Kong 1.0.x has a community maintained documentation about it's REST interface:
