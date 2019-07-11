@@ -1,0 +1,877 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: Kong Admin API
+  description: REST interface to configurate Kong.
+host: kong-admin.hvg.hu
+paths:
+  /services:
+    get:
+      summary: List all services
+      operationId: ListServices
+      tags:
+        - services
+      parameters:
+        - in: query
+          name: offset
+          description: An uid of a service as an offset.
+          required: false
+          type: string
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ServiceList"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Registrate service to Kong
+      operationId: AddService
+      tags:
+        - services
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: serviceUpsert
+          required: true
+          schema:
+            $ref: "#/definitions/ServiceUpsert"
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/Service"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /services/{service}:
+    delete:
+      summary: Delete a service by a name or id
+      operationId: DeleteService
+      tags:
+        - services
+      parameters:
+        - name: service
+          in: path
+          description: The unique identifier or the name of the Service to delete.
+          required: true
+          type: string
+      responses:
+        204:
+          description: No Content
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /services/{service}/routes:
+    get:
+      summary: List Routes associated to a specific Service
+      operationId: ListRoutes
+      tags:
+        - routes
+      parameters:
+        - name: service
+          in: path
+          description: The unique identifier or the name attribute of the Service that's Routes should be listed.
+          required: true
+          type: string
+        - name: offset
+          in: query
+          description: An uid of a route as an offset.
+          required: false
+          type: string
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RouteList"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Create Route associated to a specific Service
+      operationId: AddRoute
+      tags:
+        - routes
+      consumes:
+        - application/json
+      parameters:
+        - name: service
+          in: path
+          description: The unique identifier or the name attribute of the Service that should be associated to the newly-created Route.
+          required: true
+          type: string
+        - name: routeUpsert
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RouteUpsert"
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/Route"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /routes/{route}:
+    delete:
+      summary: Delete a Route by a name or id
+      operationId: DeleteRoute
+      tags:
+        - routes
+      parameters:
+        - name: route
+          in: path
+          description: The unique identifier or the name of the Route to delete.
+          required: true
+          type: string
+      responses:
+        204:
+          description: No Content
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /services/{service}/plugins:
+    get:
+      summary: List Plugins associated to a specific Service
+      operationId: ListPlugins
+      tags:
+        - plugins
+      parameters:
+        - name: service
+          in: path
+          description: The unique identifier or the name attribute of the Service that's Plugins should be listed.
+          required: true
+          type: string
+        - name: offset
+          in: query
+          description: An uid of a plugin as an offset.
+          required: false
+          type: string
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/PluginList"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Enabling the plugin on a Service
+      operationId: AddPlugin
+      tags:
+        - plugins
+      consumes:
+        - application/json
+      parameters:
+        - name: service
+          in: path
+          description: The id or name of the Service that this plugin configuration will target..
+          required: true
+          type: string
+        - name: pluginUpsert
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/PluginUpsert"
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/Plugin"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /plugins/{pluginId}:
+    delete:
+      summary: Delete a Plugin by an id
+      operationId: DeletePlugin
+      tags:
+        - plugins
+      parameters:
+        - name: pluginId
+          in: path
+          description: The unique identifier of the Plugin to delete.
+          required: true
+          type: string
+      responses:
+        204:
+          description: No Content
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /consumers:
+    get:
+      summary: List all Consumers
+      operationId: ListConsumers
+      tags:
+        - consumers
+      parameters:
+        - name: offset
+          in: query
+          description: An uid of a consumer as an offset.
+          required: false
+          type: string
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ConsumerList"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Create Consumer
+      operationId: AddConsumer
+      tags:
+        - consumers
+      consumes:
+        - application/json
+      parameters:
+        - name: consumerUpsert
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ConsumerUpsert"
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/Consumer"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /consumers/{consumer}:
+    get:
+      summary: Retrieve a Consumer
+      operationId: GetConsumer
+      tags:
+        - consumers
+      parameters:
+        - name: consumer
+          in: path
+          description: The unique identifier or the username of the Consumer to retrieve.
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Consumer"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    patch:
+      summary: Update a Consumer
+      operationId: UpdateConsumer
+      tags:
+        - consumers
+      consumes:
+        - application/json
+      parameters:
+        - name: consumer
+          in: path
+          description: The unique identifier or the username of the Consumer to update.
+          required: true
+          type: string
+        - name: consumerUpsert
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ConsumerUpsert"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Consumer"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Create or update a Consumer
+      operationId: AddConsumerWithId
+      tags:
+        - consumers
+      consumes:
+        - application/json
+      parameters:
+        - name: consumer
+          in: path
+          description: The unique identifier of the new Consumer.
+          required: true
+          type: string
+        - name: consumerUpsert
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ConsumerUpsert"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Consumer"
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/Consumer"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Delete a Consumer by username or id
+      operationId: DeleteConsumer
+      tags:
+        - consumers
+      parameters:
+        - name: consumer
+          in: path
+          description: The unique identifier or the username of the Consumer to delete.
+          required: true
+          type: string
+      responses:
+        204:
+          description: No Content
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /consumers/{consumer}/jwt:
+    get:
+      summary: List JWT credentials of Consumer
+      operationId: ListCredentials
+      tags:
+        - credentials
+      parameters:
+        - name: consumer
+          in: path
+          description: The id or username property of the Consumer entity to list credentials for.
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/CredentialList"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Create a JWT credential
+      operationId: AddCredential
+      tags:
+        - credentials
+      parameters:
+        - name: consumer
+          in: path
+          description: The id or username property of the Consumer entity to associate the credentials to.
+          required: true
+          type: string
+        - name: credentialUpsert
+          in: body
+          required: false
+          schema:
+            $ref: "#/definitions/CredentialUpsert"
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/Credential"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /consumers/{consumer}/jwt/{id}:
+    get:
+      summary: Get a JWT Credential
+      operationId: GetCredential
+      tags:
+        - credentials
+      parameters:
+        - name: consumer
+          in: path
+          description: The id or username property of the Consumer entity to associate the credentials to.
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: The id or the key of the JWT credential.
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Credential"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Delete a JWT Credential
+      operationId: DeleteCredential
+      tags:
+        - credentials
+      parameters:
+        - name: consumer
+          in: path
+          description: The id or username property of the Consumer entity to associate the credentials to.
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: The id or the key of the JWT credential.
+          required: true
+          type: string
+      responses:
+        204:
+          description: No Content
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /acls:
+    get:
+      summary: Retrieve all ACLs
+      operationId: ListAcls
+      tags:
+        - acls
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/AclList"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /consumers/{consumer}/acls:
+    get:
+      summary: Retrieve all ACLs for the given Consumer
+      operationId: ListAclsForConsumer
+      tags:
+        - acls
+      parameters:
+        - name: consumer
+          in: path
+          description: The id or username property of the Consumer entity which ACLs will be listed.
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/AclList"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Add ACL to a consumer
+      operationId: AddAcl
+      tags:
+        - acls
+      consumes:
+        - application/x-www-form-urlencoded
+      parameters:
+        - name: consumer
+          in: path
+          description: The id or username property of the Consumer entity to associate the credentials to.
+          required: true
+          type: string
+        - name: group
+          in: formData
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/Acl"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /consumers/{consumer}/acls/{id}:
+    delete:
+      summary: Delete an ACL
+      operationId: DeleteAcl
+      tags:
+        - acls
+      parameters:
+        - name: consumer
+          in: path
+          description: The id or username property of the Consumer entity to associate the credentials to.
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: The id of the ACL.
+          required: true
+          type: string
+      responses:
+        204:
+          description: No Content
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  ServiceUpsert:
+    properties:
+      name:
+        type: string
+        description: The Service name.
+      retries:
+        type: integer
+        format: int32
+        description: The number of retries to execute upon failure to proxy. Defaults to 5.
+      protocol:
+        type: string
+        enum: [http, https]
+        description: The protocol used to communicate with the upstream. It can be one of http or https.
+        default: http
+      host:
+        type: string
+        description: The host of the upstream server.
+      port:
+        type: integer
+        format: int32
+        description: The upstream server port.
+        default: 80
+      path:
+        type: string
+        description: The path to be used in requests to the upstream server.
+      connect_timeout:
+        type: integer
+        format: int32
+        description: The timeout in milliseconds for establishing a connection to the upstream server.
+        default: 60000
+      write_timeout:
+        type: integer
+        format: int32
+        description: The timeout in milliseconds between two successive write operations for transmitting a request to the upstream server.
+        default: 60000
+      read_timeout:
+        type: integer
+        format: int32
+        description: The timeout in milliseconds between two successive read operations for transmitting a request to the upstream server.
+        default: 60000
+      # The following parameter is not included, otherwise protocol, host and port could not be required.
+      #url:
+      #  type: string
+      #  description: Shorthand attribute to set protocol, host, port and path at once. This attribute is write-only (the Admin API never “returns” the url).
+  Service:
+    allOf:
+      - $ref: "#/definitions/ServiceUpsert"
+      - $ref: "#/definitions/ModelBaseWithCreateAndUpdate"
+  ServicePreview:
+    properties:
+      id:
+        type: string
+        description: Uid.
+  ServiceList:
+    properties:
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/Service"
+        description: List of services.
+      next:
+        type: string
+        description: Url to fetch next part of the service list.
+  RouteUpsert:
+    properties:
+      name:
+        type: string
+        description: The name of the Route.
+      protocols:
+        type: array
+        items:
+          type: string
+        description: A list of the protocols this Route should allow. When set to ["https"], HTTP requests are answered with a request to upgrade to HTTPS. Defaults to ["http", "https"].
+      methods:
+        type: array
+        items:
+          type: string
+        description: A list of HTTP methods that match this Route. When using http or https protocols, at least one of hosts, paths, or methods must be set.
+      hosts:
+        type: array
+        items:
+          type: string
+        description: A list of domain names that match this Route. When using http or https protocols, at least one of hosts, paths, or methods must be set. With form-encoded, the notation is hosts[]=example.com&hosts[]=foo.test. With JSON, use an Array.
+      paths:
+        type: array
+        items:
+          type: string
+        description: A list of paths that match this Route. When using http or https protocols, at least one of hosts, paths, or methods must be set. With form-encoded, the notation is paths[]=/foo&paths[]=/bar. With JSON, use an Array.
+      regex_priority:
+        type: integer
+        default: 0
+        description: A number used to choose which route resolves a given request when several routes match it using regexes simultaneously. When two routes match the path and have the same regex_priority, the older one (lowest created_at) is used. Note that the priority for non-regex routes is different (longer non-regex routes are matched before shorter ones).
+      strip_path:
+        type: boolean
+        default: true
+        description: When matching a Route via one of the paths, strip the matching prefix from the upstream request URL.
+      preserve_host:
+        type: boolean
+        description: When matching a Route via one of the hosts domain names, use the request Host header in the upstream request headers. If set to false, the upstream Host header will be that of the Service’s host.
+      snis:
+        type: array
+        items:
+          type: string
+        description: A list of SNIs that match this Route when using stream routing. When using tcp or tls protocols, at least one of snis, sources, or destinations must be set.
+      sources:
+        type: array
+        items:
+          type: string
+        description: A list of IP sources of incoming connections that match this Route when using stream routing. Each entry is an object with fields “ip” (optionally in CIDR range notation) and/or “port”. When using tcp or tls protocols, at least one of snis, sources, or destinations must be set.
+      destinations:
+        type: array
+        items:
+          type: string
+        description: A list of IP destinations of incoming connections that match this Route when using stream routing. Each entry is an object with fields “ip” (optionally in CIDR range notation) and/or “port”. When using tcp or tls protocols, at least one of snis, sources, or destinations must be set.
+  Route:
+    allOf:
+      - $ref: "#/definitions/RouteUpsert"
+      - $ref: "#/definitions/ModelBaseWithCreateAndUpdate"
+      - type: object
+        properties:
+          service:
+            $ref: "#/definitions/ServicePreview"
+  RoutePreview:
+    properties:
+      id:
+        type: string
+        description: Uid.
+  RouteList:
+    properties:
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/Route"
+        description: List of routes associated to a specific service.
+      next:
+        type: string
+        description: Url to fetch next part of the route list.
+  PluginUpsert:
+    properties:
+      name:
+        type: string
+        description: The name of the Plugin that’s going to be added. Currently the Plugin must be installed in every Kong instance separately.
+      config:
+        type: object
+        description: The configuration properties for the Plugin which can be found on the plugins documentation page in the Kong Hub.
+        additionalProperties:
+          type: object
+      route:
+        $ref: "#/definitions/RoutePreview"
+        description: 'If set, the plugin will only activate when receiving requests via the specified route. Leave unset for the plugin to activate regardless of the Route being used. Defaults to null. With form-encoded, the notation is route.id=<route_id>. With JSON, use "route":{"id":"<route_id>"}.'
+      service:
+        $ref: "#/definitions/ServicePreview"
+        description: 'If set, the plugin will only activate when receiving requests via one of the routes belonging to the specified Service. Leave unset for the plugin to activate regardless of the Service being matched. Defaults to null. With form-encoded, the notation is service.id=<service_id>. With JSON, use "service":{"id":"<service_id>"}.'
+      consumer:
+        $ref: "#/definitions/ConsumerPreview"
+        description: If set, the plugin will activate only for requests where the specified has been authenticated. (Note that some plugins can not be restricted to consumers this way.). Leave unset for the plugin to activate regardless of the authenticated consumer. Defaults to null. With form-encoded, the notation is consumer.id=<consumer_id>. With JSON, use "consumer":{"id":"<consumer_id>"}.
+      run_on:
+       type: string
+       default: first
+       description: "Control on which Kong nodes this plugin will run, given a Service Mesh scenario. Accepted values are: * first, meaning “run on the first Kong node that is encountered by the request”. On an API Getaway scenario, this is the usual operation, since there is only one Kong node in between source and destination. In a sidecar-to-sidecar Service Mesh scenario, this means running the plugin only on the Kong sidecar of the outbound connection. * second, meaning “run on the second node that is encountered by the request”. This option is only relevant for sidecar-to-sidecar Service Mesh scenarios: this means running the plugin only on the Kong sidecar of the inbound connection. * all means “run on all nodes”, meaning both sidecars in a sidecar-to-sidecar scenario. This is useful for tracing/logging plugins."
+      enabled:
+        type: boolean
+        default: true
+        description: Whether the plugin is applied.
+  Plugin:
+    allOf:
+      - $ref: "#/definitions/PluginUpsert"
+      - $ref: "#/definitions/ModelBaseWithCreate"
+  PluginList:
+    properties:
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/Plugin"
+        description: List of plugins associated to a specific service.
+      next:
+        type: string
+        description: Url to fetch next part of the plugin list.
+  ConsumerUpsert:
+    properties:
+      username:
+        type: string
+        description: The unique username of the consumer. You must send either this field or custom_id with the request.
+      custom_id:
+        type: string
+        description: Field for storing an existing unique ID for the consumer - useful for mapping Kong with users in your existing database. You must send either this field or username with the request.
+  Consumer:
+    allOf:
+      - $ref: "#/definitions/ConsumerUpsert"
+      - $ref: "#/definitions/ModelBaseWithCreate"
+  ConsumerPreview:
+    properties:
+      id:
+        type: string
+        description: Uid.
+  ConsumerList:
+    properties:
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/Consumer"
+        description: List of Consumers.
+      next:
+        type: string
+        description: Url to fetch next part of the Consumer list.
+  CredentialUpsert:
+    allOf:
+      - type: object
+        properties:
+          key:
+            type: string
+            description: A unique string identifying the credential.
+  Credential:
+    allOf:
+      - $ref: "#/definitions/ModelBaseWithMilisecCreate"
+      - type: object
+        properties:
+          key:
+            type: string
+            description: A unique string identifying the credential.
+          secret:
+            type: string
+            description: If algorithm is HS256 or ES256, the secret used to sign JWTs for this credential.
+          algorithm:
+            type: string
+            enum: [HS256, HS384, HS512, RS256, ES256]
+            description: The algorithm used to verify the token’s signature. Can be HS256, HS384, HS512, RS256, or ES256.
+          rsa_public_key:
+            type: string
+            description:   If algorithm is RS256 or ES256, the public key (in PEM format) to use to verify the token’s signature.
+          consumer_id:
+            type: string
+            description: Uid of consumer.
+  CredentialList:
+    properties:
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/Credential"
+        description: List of Credentials.
+      total:
+        type: integer
+        format: int32
+        description: Number of Credentials for a Consumer.
+  AclUpsert:
+    properties:
+      group:
+        type: string
+        description: The arbitrary group name to associate to the consumer.
+  Acl:
+    allOf:
+      - $ref: "#/definitions/AclUpsert"
+      - $ref: "#/definitions/ModelBaseWithMilisecCreate"
+      - type: object
+        properties:
+          consumer:
+            $ref: "#/definitions/ConsumerPreview"
+  AclList:
+    properties:
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/Acl"
+        description: List of Acls.
+      total:
+        type: integer
+        format: int32
+        description: Number of Acls for a Consumer.
+  ModelBaseWithCreate:
+    properties:
+      id:
+        type: string
+        description: Uid.
+      created_at:
+        type: integer
+        format: int32
+        description: Unix timestamp of the create action
+  ModelBaseWithCreateAndUpdate:
+    properties:
+      id:
+        type: string
+        description: Uid.
+      created_at:
+        type: integer
+        format: int32
+        description: Unix timestamp of the create action
+      updated_at:
+        type: integer
+        format: int32
+        description: Unix timestamp of the last update action
+  ModelBaseWithMilisecCreate:
+    properties:
+      id:
+        type: string
+        description: Uid.
+      created_at:
+        type: integer
+        format: int32
+        description: Milisec based timestamp of the create action
+  Error:
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      name:
+        type: string
+      fields:
+        type: object
